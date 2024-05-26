@@ -2659,6 +2659,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3305272941298379342, guid: dbc44c81922e33b46ad47f79f1f0195f,
+        type: 3}
+      propertyPath: _layers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770981315223572030, guid: dbc44c81922e33b46ad47f79f1f0195f,
+        type: 3}
+      propertyPath: _layers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770981315223572030, guid: dbc44c81922e33b46ad47f79f1f0195f,
+        type: 3}
+      propertyPath: _obstacleLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4891121507556649036, guid: dbc44c81922e33b46ad47f79f1f0195f,
         type: 3}
       propertyPath: m_AngularSpeed

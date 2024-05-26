@@ -152,14 +152,15 @@ namespace Lions.AI
                 Considerations = new List<IConsideration>
                 {
                     new GroupParticipatingConsideration(Pride.HuntingGroup),
-                    new DistanceToTargetConsideration(agent => agent.GetData<Prey>(LionBlackboardKeys.PreyTarget)?.transform, AIUtils.GetDistanceFunction())
+                    new DistanceToTargetConsideration(agent =>
+                    {
+                        var prey = agent.GetData<Prey>(LionBlackboardKeys.PreyTarget);
+                        return prey ? prey.transform : null;
+                    }, AIUtils.GetDistanceFunction())
                 },
                 Combiner = new UtilityCombinerProduct(),
                 ContextProducer = RestPlaceContextProducer,
             },
-            
-            
-            //---Wait for prey
 
             //Migrating
             new()

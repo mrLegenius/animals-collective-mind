@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5929629800398587521}
   - component: {fileID: 457143871541807219}
   - component: {fileID: 6521828545093457246}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: mid_tall_patch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 1007814538395704255}
   - component: {fileID: 5205456323582921920}
   - component: {fileID: 4189777042003882461}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: mid_tall_patch (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 7999481087368432193}
   - component: {fileID: 6608396112675191188}
   - component: {fileID: 651159245986069698}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Rest Place
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,9 +235,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8a8c031c0834d4fbb28232b30a09fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inUseMaterial: {fileID: 2100000, guid: 606e6a9462ea46640a57be8614a06c82, type: 2}
-  _freeMaterial: {fileID: 2100000, guid: bd5caca8454331949b4b551dc1145524, type: 2}
-  _mesh: {fileID: 0}
 --- !u!114 &651159245986069698
 MonoBehaviour:
   m_ObjectHideFlags: 0
