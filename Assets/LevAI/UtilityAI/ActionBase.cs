@@ -8,7 +8,8 @@ namespace LevAI.UtilityAI
         public abstract void Execute(IAgent agent, TContext context);
         public virtual bool IsValid(IAgent agent, TContext context) => true;
         public virtual bool IsFinished(IAgent agent, TContext context) => true;
-        public virtual void OnFinished(Agent agent) { }
+        public virtual void OnFinished(IAgent agent) { }
+        public virtual void OnInterrupted(IAgent agent) { }
         
         void IAction.Execute(IAgent agent, IContext context) => Execute(agent, (TContext)context);
         bool IAction.IsFinished(IAgent agent, IContext context) => IsFinished(agent, (TContext)context);
@@ -22,7 +23,8 @@ namespace LevAI.UtilityAI
         public abstract void Execute(IAgent agent);
         public virtual bool IsValid(IAgent agent) => true;
         public virtual bool IsFinished(IAgent agent) => true;
-        public virtual void OnFinished(Agent agent) { }
+        public virtual void OnFinished(IAgent agent) { }
+        public virtual void OnInterrupted(IAgent agent) { }
         
         void IAction.Execute(IAgent agent, IContext context) => Execute(agent);
         bool IAction.IsFinished(IAgent agent, IContext context) => IsFinished(agent);

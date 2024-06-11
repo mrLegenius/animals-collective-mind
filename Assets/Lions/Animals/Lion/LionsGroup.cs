@@ -21,19 +21,37 @@ namespace Lions.AI
             lion.Agent.SetData(LionBlackboardKeys.MigrationRegion, _targetRegion, int.MaxValue);
         }
 
-        public override void RemoveLionToGroup(Lion lion)
+        public override bool RemoveLionToGroup(Lion lion)
         {
-            base.RemoveLionToGroup(lion);
+            var success = base.RemoveLionToGroup(lion);
+            if (!success) return false;
+            
             lion.Agent.RemoveData(LionBlackboardKeys.MigrationRegion);
             lion.SetRestPlace(_targetRegion.RestPlace);
+
+            return true;
         }
     }
     
     public sealed class HuntGroup : LionsGroup
     {
         public override string Name => Pride.HuntingGroup;
-        public bool IsAmbushReady => Lions.All(x => x.GetHuntingRole() == LionHuntingRole.Chase) || Lions.Any(x => x.GetHuntingRole() == LionHuntingRole.Ambush && IsAmbushReadyFor(x.Agent));
+        public bool IsAmbushReady => IsAmbushTriggered 
+                                     || Lions.All(x => x.GetHuntingRole() == LionHuntingRole.Chase) 
+                                     || Lions.Any(x => x.GetHuntingRole() == LionHuntingRole.Ambush && IsAmbushReadyFor(x.Agent));
 
+        public bool IsAmbushTriggered { get; private set; }
+
+        public void TriggerAmbush()
+        {
+            foreach (Lion lion in Lions)
+            {
+                lion.SetHuntingRole(LionHuntingRole.Chase);
+            }
+
+            IsAmbushTriggered = true;
+        }
+        
         private Prey _targetPrey;
         
         public override void AddLionToGroup(Lion lion)
@@ -42,20 +60,34 @@ namespace Lions.AI
                 _targetPrey ??= lion.Agent.GetData<Prey>(LionBlackboardKeys.PreyTarget);
 
             lion.Agent.SetData(LionBlackboardKeys.PreyTarget, _targetPrey, 100);
+
+            if (Lions.Count > 1)
+            {
+                var ambush = lion.Agent.GetData<Transform>(LionBlackboardKeys.Ambush);
+                if (ambush != null)
+                    lion.Agent.SetData(LionBlackboardKeys.Ambush, ambush, 100);
+            }
             
             base.AddLionToGroup(lion);
             
-            var role = Lions.Count % 2 == 0 ? LionHuntingRole.Ambush : LionHuntingRole.Chase;
+            var role = Lions.Count % 2 == 0 && !IsAmbushTriggered ? LionHuntingRole.Ambush : LionHuntingRole.Chase;
             lion.SetHuntingRole(role);
         }
 
-        public override void RemoveLionToGroup(Lion lion)
+        public override bool RemoveLionToGroup(Lion lion)
         {
-            lion.SetHuntingRole(LionHuntingRole.None);
-            base.RemoveLionToGroup(lion);
+            var success = base.RemoveLionToGroup(lion);
+            if (!success) return false;
             
+            lion.SetHuntingRole(LionHuntingRole.None);
+
             if (Lions.Count == 1 && Lions.First().GetHuntingRole() == LionHuntingRole.Ambush)
+            {
                 Lions.First().SetHuntingRole(LionHuntingRole.Chase);
+                IsAmbushTriggered = false;
+            }
+
+            return true;
         }
         
         private static bool IsAmbushReadyFor(IAgent agent)
@@ -76,15 +108,25 @@ namespace Lions.AI
 
         public virtual void AddLionToGroup(Lion lion) => Lions.Add(lion);
 
-        public virtual void RemoveLionToGroup(Lion lion) => Lions.Remove(lion);
+        public virtual bool RemoveLionToGroup(Lion lion) => Lions.Remove(lion);
 
-        public void SendMessage(Lion from, string objectId, string key, object message)
+        public void SendMessage(Lion from, string objectId, string key, object message, int priority = 5)
         {
             foreach (Lion lion in Lions)
             {
                 if (lion == from) continue;
                 
-                lion.SetInfo(objectId, key, message, 5);
+                lion.SetInfo(objectId, key, message, priority);
+            }
+        }
+        
+        public void SendMessage(Lion from, string key, object message, int priority = 5)
+        {
+            foreach (Lion lion in Lions)
+            {
+                if (lion == from) continue;
+                
+                lion.SetInfo(lion.GetInstanceID().ToString(), key, message, priority);
             }
         }
     }

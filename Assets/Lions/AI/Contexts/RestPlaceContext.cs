@@ -43,4 +43,27 @@ namespace Lions.AI.Contexts
             _contextItems.AddRange(contextItems);
         }
     }
+    
+    public class TallGrassContextProducer : IContextProducer
+    {
+        private readonly List<IContext> _contextItems = new();
+
+        public IEnumerable<IContext> Context => _contextItems;
+
+        public void Produce(IAgent agent)
+        {
+            var world = agent.GetData<Animal>(AnimalBlackboardKeys.Animal).World;
+            var sources = world.TallGrassList;
+            var contextItems = sources
+                .Where(x => x != null)
+                .Select(source => new RestPlaceContext
+                {
+                    Source = source,
+                    SqrDistance = agent.GetSqrDistance(source.transform),
+                });
+
+            _contextItems.Clear();
+            _contextItems.AddRange(contextItems);
+        }
+    }
 }

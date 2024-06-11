@@ -7,6 +7,7 @@ public interface IAction
     void Execute(IAgent agent, IContext context);
     bool IsValid(IAgent agent, IContext context);
     bool IsFinished(IAgent agent, IContext context);
-    void OnFinished(Agent agent);
+    void OnFinished(IAgent agent);
+    void OnInterrupted(IAgent agent);
 }
 }

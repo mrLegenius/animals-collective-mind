@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using LevAI.Perception;
+﻿using LevAI.Perception;
 using LevAI.UtilityAI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,7 +11,6 @@ namespace Lions.Animals
         [SerializeField] public AnimalState State;
         [SerializeField] public AnimalStats Stats;
         
-        [SerializeField] protected Rigidbody Rigidbody;
         [SerializeField] protected NavMeshAgent _navMeshAgent;
         [SerializeField] protected World _world;
         [SerializeField] protected bool _showLogs;
@@ -29,6 +26,7 @@ namespace Lions.Animals
         private float _deathTimer;
 
         public float Danger => Stats.Danger;
+        public World World => _world;
 
         private void Awake()
         {
@@ -43,7 +41,7 @@ namespace Lions.Animals
         {
             Agent.ShowLogs = _showLogs;
             
-            StopMove();
+            StopMoving();
             
             Profiler.BeginSample("AI Loop");
             
@@ -86,6 +84,7 @@ namespace Lions.Animals
             }
             else if (_deathTimer >= _deathTime)
             {
+                OnDied();
                 Destroy(gameObject);
                 Debug.Log($"Animal '{name}' died");
             }
@@ -95,6 +94,7 @@ namespace Lions.Animals
         
         protected abstract Agent CreateBrains();
         
+        protected virtual void OnDied() { }
         protected virtual void CollectObservation()
         {
             Agent.SetData(AnimalBlackboardKeys.State, State, int.MaxValue);
@@ -107,13 +107,17 @@ namespace Lions.Animals
             if (_dangerSensor)
                 Agent.SetData(AnimalBlackboardKeys.Fear, _dangerSensor.Fear, int.MaxValue);
         }
-
-        private void StopMove() => Rigidbody.velocity = Vector3.zero;
-
+        
         public void MoveTo(Vector3 position, float speed)
         {
+            _navMeshAgent.isStopped = false;
             _navMeshAgent.speed = speed;
             _navMeshAgent.SetDestination(position);
+        }
+
+        public void StopMoving()
+        {
+            _navMeshAgent.isStopped = true;
         }
     }
 }

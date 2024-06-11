@@ -19,6 +19,7 @@ namespace Lions.Animals.Lion
         public Object CurrentRegion => _currentRegion;
         public LionsGroup CurrentGroup => _currentGroup;
         public Pride Pride => _pride;
+        public bool IsInAmbush => _huntingRole == LionHuntingRole.Ambush;
 
         protected override Agent CreateBrains()
         {
@@ -28,15 +29,17 @@ namespace Lions.Animals.Lion
             return agent;
         }
 
-        private void OnActionGroupChanged(string group)
+        private void OnActionGroupChanged(string oldGroup, string group)
         {
-            _pride.LeaveGroup(group, this);
-            _currentGroup = null;
+            if (_pride.LeaveGroup(oldGroup, this))
+                _currentGroup = null;
         }
         
         private LionHuntingRole _huntingRole;
 
         public void SetInfo<T>(string objectId, string key, T data, int priority) => Agent.SetData(objectId, key, data, priority);
+
+        protected override void OnDied() => _pride.LeaveGroup(CurrentGroup?.Name, this);
 
         protected override void CollectObservation()
         {
@@ -49,6 +52,10 @@ namespace Lions.Animals.Lion
                 Agent.SetData( LionBlackboardKeys.AllRestPlaces, restPlaces, 5);
                 Agent.SetData(LionBlackboardKeys.HasAnyRestPlace, restPlaces.Count > 0, 5);
             }
+            
+            if (_currentRegion)
+                Agent.SetData(AnimalBlackboardKeys.AllWaterSources,
+                _currentRegion.WaterReservoirs.SelectMany(x => x.AllSources).ToList(), 10);
             
             Agent.SetData(LionBlackboardKeys.AllMeatSources, _world.AllMeatSources, 5);
             Agent.SetData(LionBlackboardKeys.HasAnyMeatSource, _world.AllMeatSources.Count(x => x) > 0, 5);

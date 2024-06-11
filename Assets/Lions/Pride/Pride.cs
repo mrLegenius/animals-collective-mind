@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lions.AI;
 using Lions.Animals.Lion;
+using Lions.Extensions;
 using UnityEngine;
 
 namespace Lions
@@ -37,14 +38,18 @@ namespace Lions
             return group;
         }
 
-        public void LeaveGroup(string groupName, Lion lion)
+        public bool LeaveGroup(string groupName, Lion lion)
         {
-            if (!_groups.TryGetValue(groupName, out var group)) return;
+            if (string.IsNullOrEmpty(groupName)) return false;
             
-            group.RemoveLionToGroup(lion);
+            if (!_groups.TryGetValue(groupName, out var group)) return false;
+            
+            var success = group.RemoveLionToGroup(lion);
 
             if (group.Lions.Count <= 0)
                 _groups.Remove(groupName);
+
+            return success;
         }
 
         private static LionsGroup CreateGroup(string groupName) =>

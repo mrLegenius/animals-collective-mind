@@ -9,16 +9,21 @@ namespace Lions.AI
     public static class AIUtils
     {
         private const float MaxSqrDistance = 1000f;
-        
-        public static float GetSqrDistance(this IAgent agent, Transform transform) => 
-            GetSqrDistance(agent.GetData<Animal>(AnimalBlackboardKeys.Animal).transform, transform);
 
-        public static float GetSqrDistance(this Transform obj, Transform transform)
+        public static float GetSqrDistance(this IAgent agent, Transform transform) =>
+            agent.GetSqrDistance(transform.position);
+        
+        public static float GetSqrDistance(this IAgent agent, Vector3 position) => 
+            GetSqrDistance(agent.GetData<Animal>(AnimalBlackboardKeys.Animal).transform, position);
+
+        public static float GetSqrDistance(this Transform obj, Transform transform) => GetSqrDistance(obj, transform.position);
+
+        public static float GetSqrDistance(this Transform obj, Vector3 position)
         {
             Vector3 agentPosition = obj.position;
             agentPosition.y = 0;
 
-            Vector3 targetPosition = transform.position;
+            Vector3 targetPosition = position;
             targetPosition.y = 0;
             
             return Vector3.SqrMagnitude(agentPosition - targetPosition);

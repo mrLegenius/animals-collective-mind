@@ -31,7 +31,7 @@ namespace Lions.Animals.Prey
                     Considerations = new List<IConsideration>
                     {
                         new ThirstConsideration(new ClampedQuadraticFunction(1, 4)),
-                        AIUtils.GetDistanceConsideration(),
+                        new DistanceConsideration(new ClampedLinearInvertedFunction(25)),
                         FearConsideration,
                     },
                     Combiner = new UtilityCombinerProduct(),
@@ -58,7 +58,7 @@ namespace Lions.Animals.Prey
                     Considerations = new List<IConsideration>
                     {
                         new FearConsideration(new ClampedQuadraticFunction(100.0f, 0.5f)),
-                        AIUtils.GetDistanceConsideration(100),
+                        AIUtils.GetDistanceConsideration(10000),
                     },
                     Combiner = new UtilityCombinerProduct(),
                     ContextProducer = LionContextProducer,

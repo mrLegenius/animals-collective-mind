@@ -26,7 +26,7 @@ namespace LevAI.UtilityAI
 
         public string ActionGroup { get; private set; } = string.Empty;
 
-        public event Action<string> ActionGroupChanged;
+        public event Action<string, string> ActionGroupChanged;
 
         private readonly List<SelectorActions> _actions;
         private readonly IEnumerable<IContextProducer> _contextProducers;
@@ -113,14 +113,22 @@ namespace LevAI.UtilityAI
         
         private void Think()
         {
+            var previousOption = CurrentOption;
             CurrentOption = GetBestDecision();
+
+            if (previousOption.Action != null && previousOption.Action.Equals(CurrentAction) 
+                && (previousOption.Context == null || previousOption.Context.Equals(CurrentActionContext)))
+            {
+                previousOption.Action.OnInterrupted(this);
+            }
 
             string newGroup = CurrentOption.Action?.Group ?? string.Empty;
 
-            if (ActionGroup != newGroup)
+            if (!ActionGroup.Equals(newGroup))
             {
+                var oldGroup = ActionGroup;
                 ActionGroup = newGroup;
-                ActionGroupChanged?.Invoke(newGroup);
+                ActionGroupChanged?.Invoke(oldGroup, newGroup);
             }
         }
 
@@ -244,7 +252,7 @@ namespace LevAI.UtilityAI
             string log = string.Empty;
             
             if (ShowLogs)
-                log = "Consideration process: \n";
+                log = $"Consideration process for action {behavior.Action.GetType().Name}: \n";
             foreach (var consideration in behavior.Considerations)
             {
                 var score = consideration.Execute(this, context);

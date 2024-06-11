@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using LevAI.UtilityAI;
+﻿using LevAI.UtilityAI;
 using UnityEngine;
 
 namespace Lions.Animals.Prey
@@ -41,7 +40,7 @@ namespace Lions.Animals.Prey
         public override bool IsValid(IAgent agent) => 
             agent.GetData<AnimalState>(AnimalBlackboardKeys.State).Energy.Value > 0;
 
-        public override void OnFinished(Agent agent)
+        public override void OnFinished(IAgent agent)
         {
             _isWandering = false;
         }

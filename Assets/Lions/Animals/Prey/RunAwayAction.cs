@@ -29,8 +29,15 @@ namespace Lions.Animals.Prey
             
             var animal = agent.GetData<Animal>(AnimalBlackboardKeys.Animal);
 
-            var direction = me.transform.position - closestLion.transform.position.normalized;
+            var direction = (me.transform.position - closestLion.transform.position).normalized;
             animal.MoveTo(me.transform.position + direction, stats.RunSpeed);
+        }
+
+        public override bool IsValid(IAgent agent, LionContext context)
+        {
+            var lion = context.Source;
+
+            return !lion.IsInAmbush;
         }
     }
 }
